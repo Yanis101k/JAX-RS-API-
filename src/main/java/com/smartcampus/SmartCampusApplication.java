@@ -1,5 +1,4 @@
 package com.smartcampus;
-
 import org.glassfish.jersey.server.ResourceConfig;
 
 
