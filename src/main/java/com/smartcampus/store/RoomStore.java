@@ -72,4 +72,10 @@ public class RoomStore {
         // Return the created room (useful for API response)
         return room;
     }
+
+        // Deletes a room by its ID
+    // Returns the removed room if it existed, or null if it was not found
+    public static Room deleteRoom(int id) {
+        return rooms.remove(id);
+    }
 }

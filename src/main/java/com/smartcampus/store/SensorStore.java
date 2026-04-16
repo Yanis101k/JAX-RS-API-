@@ -1,0 +1,109 @@
+package com.smartcampus.store;
+
+// Import the Sensor model so this store can manage sensor objects
+import com.smartcampus.models.Sensor;
+
+// Collection is used to return groups of sensors
+import java.util.Collection;
+
+// List is used when we want to build and return a filtered list of sensors
+import java.util.List;
+
+// Map stores sensors as key-value pairs (sensor id -> Sensor object)
+import java.util.Map;
+
+// ArrayList is used to create a dynamic list when filtering sensors by room
+import java.util.ArrayList;
+
+// Thread-safe map implementation for concurrent access
+import java.util.concurrent.ConcurrentHashMap;
+
+// Used to generate unique sensor IDs safely
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class SensorStore {
+
+    // This map stores all sensors in memory.
+    // Key = sensor ID
+    // Value = Sensor object
+    // ConcurrentHashMap is used to reduce concurrency problems in a multi-request environment.
+    private static final Map<Integer, Sensor> sensors = new ConcurrentHashMap<>();
+
+    // This counter generates unique IDs for sensors.
+    private static final AtomicInteger idCounter = new AtomicInteger(0);
+
+    // Static block runs once when the class is loaded.
+    // We use it to add sample sensor data for testing.
+    static {
+        // Active sensor assigned to room 1
+        Sensor sensor1 = new Sensor(
+                idCounter.incrementAndGet(), // unique sensor ID
+                "Temperature Sensor A",      // sensor name
+                1,                           // room ID
+                "Active"                        // active
+        );
+
+        // Inactive sensor assigned to room 1
+        Sensor sensor2 = new Sensor(
+                idCounter.incrementAndGet(),
+                "Humidity Sensor A",
+                1,
+                "Active"
+        );
+
+        // Active sensor assigned to room 2
+        Sensor sensor3 = new Sensor(
+                idCounter.incrementAndGet(),
+                "Motion Sensor B",
+                2,
+                "Active"
+        );
+
+        // Store the sample sensors in memory
+        sensors.put(sensor1.getId(), sensor1);
+        sensors.put(sensor2.getId(), sensor2);
+        sensors.put(sensor3.getId(), sensor3);
+    }
+
+    // Returns all sensors currently stored in memory
+    public static Collection<Sensor> getAllSensors() {
+        return sensors.values();
+    }
+
+    // Returns a list of all sensors assigned to a specific room
+    public static List<Sensor> getSensorsByRoomId(int roomId) {
+
+        // Create an empty list to store matching sensors
+        List<Sensor> roomSensors = new ArrayList<>();
+
+        // Loop through every sensor in the store
+        for (Sensor sensor : sensors.values()) {
+
+            // If this sensor belongs to the requested room, add it to the result list
+            if (sensor.getRoomId() == roomId) {
+                roomSensors.add(sensor);
+            }
+        }
+
+        // Return all sensors found for that room
+        return roomSensors;
+    }
+
+    // Checks whether a room still has at least one active sensor assigned to it
+    // This method is the key business-rule check for safe room deletion
+    public static boolean hasActiveSensorsInRoom(int roomId) {
+
+        // Loop through all sensors
+        for (Sensor sensor : sensors.values()) {
+
+            // If a sensor belongs to the room AND is active,
+            // the room must not be deleted
+            if (sensor.getRoomId() == roomId && sensor.isActive()) {
+                return true;
+            }
+        }
+
+        // No active sensors were found in the room
+        return false;
+    }
+}

@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -13,6 +14,8 @@ import javax.ws.rs.core.Response;
 
 import com.smartcampus.models.Room;
 import com.smartcampus.store.RoomStore;
+import com.smartcampus.models.Sensor;
+import com.smartcampus.store.SensorStore;
 // Import PathParam to extract values from the URL (e.g., /rooms/{id})
 import javax.ws.rs.PathParam;
 
@@ -95,7 +98,41 @@ public class RoomResource {
 
         // If the room exists, return it with HTTP 200 OK
         return Response.ok(room).build();
-}
+    }
+
+            // Handles DELETE requests to /api/v1/rooms/{id}
+        // Deletes a room only if it has no active sensors assigned to it
+        @DELETE
+        @Path("/{id}")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response deleteRoom(@PathParam("id") int id) {
+
+            // First, check whether the room exists
+            Room existingRoom = RoomStore.getRoomById(id);
+
+            // If the room does not exist, return 404 Not Found
+            if (existingRoom == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\":\"Room not found.\"}")
+                        .build();
+            }
+
+            // Business rule:
+            // A room cannot be deleted if it still has active sensors assigned to it
+            if (SensorStore.hasActiveSensorsInRoom(id)) {
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("{\"error\":\"Room cannot be deleted because it still has active sensors assigned to it.\"}")
+                        .build();
+            }
+
+            // If the room exists and has no active sensors, delete it
+            Room deletedRoom = RoomStore.deleteRoom(id);
+
+            // Return HTTP 200 OK with a success message and the deleted room
+            return Response.ok()
+                    .entity(deletedRoom)
+                    .build();
+        }
 }
 
 
