@@ -1,25 +1,14 @@
 package com.smartcampus.store;
 
 // Import the Sensor model so this store can manage sensor objects
-import com.smartcampus.models.Sensor;
-
-// Collection is used to return groups of sensors
-import java.util.Collection;
-
-// List is used when we want to build and return a filtered list of sensors
-import java.util.List;
-
-// Map stores sensors as key-value pairs (sensor id -> Sensor object)
-import java.util.Map;
-
-// ArrayList is used to create a dynamic list when filtering sensors by room
 import java.util.ArrayList;
-
-// Thread-safe map implementation for concurrent access
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-// Used to generate unique sensor IDs safely
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.smartcampus.models.Sensor;
 
 public class SensorStore {
 
@@ -38,7 +27,8 @@ public class SensorStore {
         // Active sensor assigned to room 1
         Sensor sensor1 = new Sensor(
                 idCounter.incrementAndGet(), // unique sensor ID
-                "Temperature Sensor A",      // sensor name
+                "Temperature Sensor A", // sensor name
+                "Temperature", // sensor type   
                 1,                           // room ID
                 "Active"                        // active
         );
@@ -47,6 +37,7 @@ public class SensorStore {
         Sensor sensor2 = new Sensor(
                 idCounter.incrementAndGet(),
                 "Humidity Sensor A",
+                "Humidity",
                 1,
                 "Active"
         );
@@ -55,6 +46,7 @@ public class SensorStore {
         Sensor sensor3 = new Sensor(
                 idCounter.incrementAndGet(),
                 "Motion Sensor B",
+                "Motion",
                 2,
                 "Active"
         );
@@ -68,6 +60,38 @@ public class SensorStore {
     // Returns all sensors currently stored in memory
     public static Collection<Sensor> getAllSensors() {
         return sensors.values();
+    }
+
+    // Returns sensors filtered by type
+    public static List<Sensor> getSensorsByType(String type) {
+
+        // Create a list to store matching sensors
+        List<Sensor> matchingSensors = new ArrayList<>();
+
+        // Loop through all stored sensors
+        for (Sensor sensor : sensors.values()) {
+
+            // Check that sensor type is not null and matches the requested type
+            if (sensor.getType() != null && sensor.getType().equalsIgnoreCase(type)) {
+                matchingSensors.add(sensor);
+            }
+        }
+
+        // Return the filtered list
+        return matchingSensors;
+    }
+
+        // Adds a new sensor to the store
+    public static Sensor addSensor(Sensor sensor) {
+
+        // Generate unique ID
+        int newId = idCounter.incrementAndGet();
+        sensor.setId(newId);
+
+        // Store sensor
+        sensors.put(newId, sensor);
+
+        return sensor;
     }
 
     // Returns a list of all sensors assigned to a specific room

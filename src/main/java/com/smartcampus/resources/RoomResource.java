@@ -4,20 +4,18 @@ package com.smartcampus.resources;
 import java.util.Collection;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.smartcampus.models.Room;
 import com.smartcampus.store.RoomStore;
-import com.smartcampus.models.Sensor;
 import com.smartcampus.store.SensorStore;
-// Import PathParam to extract values from the URL (e.g., /rooms/{id})
-import javax.ws.rs.PathParam;
 
 // This resource handles all requests related to rooms
 // Since the application already uses @ApplicationPath("/api/v1"),

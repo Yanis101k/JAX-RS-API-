@@ -22,9 +22,10 @@ public class Sensor {
     }
 
     // Constructor used when creating sample sensor objects
-    public Sensor(int id, String name, int roomId, String state) {
+    public Sensor(int id, String name, String type , int roomId, String state) {
         this.id = id;
         this.name = name;
+        this.type = type ; 
         this.roomId = roomId;
         this.state = state;
     }
