@@ -6,6 +6,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -72,4 +73,30 @@ public class SensorResource {
                 .entity(createdSensor)
                 .build();
     }
+
+    // Sub-resource locator for sensor readings
+    // This handles requests such as /api/v1/sensors/{sensorId}/readings
+    // Instead of directly returning data here, it delegates the request
+    // to a dedicated SensorReadingResource class.
+        @Path("{sensorId}/readings")
+        public SensorReadingResource getSensorReadingResource(@PathParam("sensorId") int sensorId) {
+
+            // Validate that the parent sensor exists before handing control
+            // to the nested resource. If it does not exist, we stop the request
+            // by throwing a 404 Not Found response.
+            Sensor sensor = SensorStore.getSensorById(sensorId);
+
+            if (sensor == null) {
+                throw new javax.ws.rs.NotFoundException(
+                        Response.status(Response.Status.NOT_FOUND)
+                                .entity("{\"error\":\"Sensor not found.\"}")
+                                .build()
+                );
+            }
+
+            // Return a new instance of the dedicated sub-resource.
+            // Jersey will continue processing the remaining part of the path
+            // using that returned object.
+            return new SensorReadingResource(sensorId);
+        }
 }

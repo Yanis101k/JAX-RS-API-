@@ -130,4 +130,10 @@ public class SensorStore {
         // No active sensors were found in the room
         return false;
     }
+
+    // Returns a specific sensor by its ID
+    // Useful when nested resources need to verify that the parent sensor exists
+    public static Sensor getSensorById(int id) {
+        return sensors.get(id);
+    }
 }
