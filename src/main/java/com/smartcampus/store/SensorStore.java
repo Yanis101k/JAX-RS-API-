@@ -31,7 +31,7 @@ public class SensorStore {
                 "Temperature", // sensor type   
                 23.7 , 
                 1,                           // room ID
-                "Active"                        // active
+                "MAINTENANCE"                        // active
         );
 
         // Inactive sensor assigned to room 1

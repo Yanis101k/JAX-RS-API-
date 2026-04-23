@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.smartcampus.exceptions.RoomNotEmptyException;
 import com.smartcampus.models.Room;
 import com.smartcampus.store.RoomStore;
 import com.smartcampus.store.SensorStore;
@@ -118,9 +119,9 @@ public class RoomResource {
             // Business rule:
             // A room cannot be deleted if it still has active sensors assigned to it
             if (SensorStore.hasActiveSensorsInRoom(id)) {
-                return Response.status(Response.Status.CONFLICT)
-                        .entity("{\"error\":\"Room cannot be deleted because it still has active sensors assigned to it.\"}")
-                        .build();
+                throw new RoomNotEmptyException(
+                "Room " + id + " cannot be deleted because it contains active sensors."
+        );
             }
 
             // If the room exists and has no active sensors, delete it

@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.smartcampus.exceptions.LinkedResourceNotFoundException;
 import com.smartcampus.models.Room;
 import com.smartcampus.models.Sensor;
 import com.smartcampus.store.RoomStore;
@@ -60,9 +61,9 @@ public class SensorResource {
         Room room = RoomStore.getRoomById(sensor.getRoomId());
 
         if (room == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\":\"Cannot create sensor. The specified room does not exist.\"}")
-                    .build();
+             throw new LinkedResourceNotFoundException(
+                "The specified roomId " + sensor.getRoomId() + " does not exist."
+        );
         }
 
         // 4. Create sensor

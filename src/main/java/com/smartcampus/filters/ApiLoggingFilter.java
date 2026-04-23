@@ -1,0 +1,33 @@
+package com.smartcampus.filters;
+
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.ext.Provider;
+
+/**
+ * Logs incoming requests and outgoing responses for API observability.
+ */
+@Provider
+public class ApiLoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
+
+    private static final Logger LOGGER = Logger.getLogger(ApiLoggingFilter.class.getName());
+
+    @Override
+    public void filter(ContainerRequestContext requestContext) throws IOException {
+        LOGGER.info("Incoming request -> Method: "
+                + requestContext.getMethod()
+                + ", URI: "
+                + requestContext.getUriInfo().getRequestUri().toString());
+    }
+
+    @Override
+    public void filter(ContainerRequestContext requestContext,
+                       ContainerResponseContext responseContext) throws IOException {
+        LOGGER.info("Outgoing response -> Status: " + responseContext.getStatus());
+    }
+}

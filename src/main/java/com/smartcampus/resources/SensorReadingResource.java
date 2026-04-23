@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.smartcampus.exceptions.SensorUnavailableException;
 import com.smartcampus.models.Sensor;
 import com.smartcampus.models.SensorReading;
 import com.smartcampus.store.SensorReadingStore;
@@ -44,12 +45,26 @@ public class SensorReadingResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createReading(SensorReading reading) {
+        
 
         // Validate that the request body exists.
         if (reading == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"error\":\"Reading data is required.\"}")
                     .build();
+        }
+
+        Sensor sensor = SensorStore.getSensorById(sensorId);
+
+        if (sensor == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        // BUSINESS RULE: sensor in maintenance cannot accept readings
+        if ("MAINTENANCE".equalsIgnoreCase(sensor.getState())) {
+            throw new SensorUnavailableException(
+                    "Sensor " + sensorId + " is currently under maintenance and cannot accept readings."
+            );
         }
 
         // We only require the numeric reading value from the client.
@@ -71,8 +86,7 @@ public class SensorReadingResource {
         // Copy the measured value from the request body.
         newReading.setValue(reading.getValue());
 
-        Sensor sensor = SensorStore.getSensorById(sensorId);
-         
+        
         sensor.setCurrentValue(newReading.getValue());
 
         // Save the reading in memory.
