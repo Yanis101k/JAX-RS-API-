@@ -11,8 +11,13 @@ public class Sensor {
     // Human-readable sensor type
     private String type; 
 
+    // The latest value measured by this sensor
+    private double currentValue;
+
     // The ID of the room this sensor belongs to
     private int roomId;
+
+
     
     // Indicates whether the sensor is currently active
     private String state;
@@ -22,10 +27,11 @@ public class Sensor {
     }
 
     // Constructor used when creating sample sensor objects
-    public Sensor(int id, String name, String type , int roomId, String state) {
+    public Sensor(int id, String name, String type , double currentValue , int roomId, String state) {
         this.id = id;
         this.name = name;
-        this.type = type ; 
+        this.type = type ;
+        this.currentValue = currentValue ;  
         this.roomId = roomId;
         this.state = state;
     }
@@ -57,7 +63,14 @@ public class Sensor {
     public int getRoomId() {
         return roomId;
     }
+    
+    public double getCurrentValue() {
+        return currentValue ; 
+    }
 
+    public void setCurrentValue( double currentValue ) {
+        this.currentValue = currentValue ; 
+    }
     public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
@@ -73,6 +86,6 @@ public class Sensor {
     public boolean isActive() {
         return  getState().equalsIgnoreCase("active")  ;
     }
-
+    
     
 }

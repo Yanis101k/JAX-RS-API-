@@ -10,8 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.smartcampus.models.Sensor;
 import com.smartcampus.models.SensorReading;
 import com.smartcampus.store.SensorReadingStore;
+import com.smartcampus.store.SensorStore;
 
 public class SensorReadingResource {
 
@@ -55,6 +57,8 @@ public class SensorReadingResource {
         // So we create a new clean object to avoid trusting client-provided metadata.
         SensorReading newReading = new SensorReading();
 
+        
+
         // Generate a unique reading event ID.
         newReading.setId(UUID.randomUUID().toString());
 
@@ -66,6 +70,10 @@ public class SensorReadingResource {
 
         // Copy the measured value from the request body.
         newReading.setValue(reading.getValue());
+
+        Sensor sensor = SensorStore.getSensorById(sensorId);
+         
+        sensor.setCurrentValue(newReading.getValue());
 
         // Save the reading in memory.
         SensorReading createdReading = SensorReadingStore.addReading(newReading);

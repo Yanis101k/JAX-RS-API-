@@ -29,6 +29,7 @@ public class SensorStore {
                 idCounter.incrementAndGet(), // unique sensor ID
                 "Temperature Sensor A", // sensor name
                 "Temperature", // sensor type   
+                23.7 , 
                 1,                           // room ID
                 "Active"                        // active
         );
@@ -38,6 +39,7 @@ public class SensorStore {
                 idCounter.incrementAndGet(),
                 "Humidity Sensor A",
                 "Humidity",
+                24.5 , 
                 1,
                 "Active"
         );
@@ -47,6 +49,7 @@ public class SensorStore {
                 idCounter.incrementAndGet(),
                 "Motion Sensor B",
                 "Motion",
+                35.1 , 
                 2,
                 "Active"
         );
